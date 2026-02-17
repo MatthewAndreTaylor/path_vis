@@ -1,0 +1,37 @@
+[project]
+name = "path_vis"
+version = "0.0.1"
+description = "Visualize transformation frame paths in Jupyter environments"
+authors = [
+    {name = "Matthew Taylor", email = "matthew.taylor.andre@gmail.com"},
+]
+requires-python = ">=3.9"
+classifiers = [
+    "Framework :: Jupyter",
+    "Framework :: Jupyter :: JupyterLab",
+    "Framework :: Jupyter :: JupyterLab :: 4",
+    "Framework :: Jupyter :: JupyterLab :: Extensions",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+urls = {Homepage = "https://github.com/MatthewAndreTaylor/path_vis"}
+keywords = ["jupyter", "visualization"]
+
+dependencies = ["anywidget"]
+
+[project.readme]
+file = "README.md"
+content-type = "text/markdown"
+
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+packages = ["path_vis"]
+include-package-data = true
