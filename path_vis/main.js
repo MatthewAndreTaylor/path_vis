@@ -16,12 +16,7 @@ export default {
 
     const planeSize = 2.0;
     const gridResolution = 20;
-    const grid = new THREE.GridHelper(
-      planeSize,
-      gridResolution,
-      0x4d4d4d,
-      0x4d4d4d,
-    );
+    const grid = new THREE.GridHelper(planeSize, gridResolution, 0x4d4d4d, 0x4d4d4d);
     grid.rotation.x = Math.PI / 2;
     scene.add(grid);
 
@@ -56,11 +51,17 @@ export default {
 
     renderer.domElement.addEventListener("wheel", (e) => {
       e.preventDefault();
-      const delta = e.deltaY * 0.01;
-      const dir = new THREE.Vector3();
-      dir.subVectors(camera.position, target);
-      dir.multiplyScalar(1 + delta);
-      camera.position.copy(target).add(dir);
+      const offset = new THREE.Vector3();
+      offset.subVectors(camera.position, target);
+
+      const spherical = new THREE.Spherical();
+      spherical.setFromVector3(offset);
+      const zoomFactor = Math.exp(e.deltaY * 0.001);
+      spherical.radius *= zoomFactor;
+      spherical.radius = Math.max(0.1, Math.min(100, spherical.radius));
+
+      offset.setFromSpherical(spherical);
+      camera.position.copy(target).add(offset);
     });
 
     renderer.domElement.addEventListener("mousedown", (e) => {
@@ -96,18 +97,18 @@ export default {
       }
 
       if (isRotating) {
-          const offset = new THREE.Vector3();
-          offset.subVectors(camera.position, target);
+        const offset = new THREE.Vector3();
+        offset.subVectors(camera.position, target);
 
-          const spherical = new THREE.Spherical();
-          spherical.setFromVector3(offset);
-          spherical.theta -= dx * 0.005;
-          
-          spherical.phi -= dy * 0.005;
-          spherical.phi = Math.max(0.01, Math.min(Math.PI - 0.01, spherical.phi));
+        const spherical = new THREE.Spherical();
+        spherical.setFromVector3(offset);
+        spherical.theta -= dx * 0.005;
 
-          offset.setFromSpherical(spherical);
-          camera.position.copy(target).add(offset);
+        spherical.phi -= dy * 0.005;
+        spherical.phi = Math.max(0.01, Math.min(Math.PI - 0.01, spherical.phi));
+
+        offset.setFromSpherical(spherical);
+        camera.position.copy(target).add(offset);
       }
 
       previousMousePos.x = e.clientX;
@@ -120,5 +121,5 @@ export default {
       renderer.render(scene, camera);
     }
     animate();
-  },
+  }
 };

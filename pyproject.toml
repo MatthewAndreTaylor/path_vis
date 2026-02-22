@@ -1,6 +1,6 @@
 [project]
 name = "path_vis"
-version = "0.0.2"
+version = "0.0.3"
 description = "Visualize transformation frame paths in Jupyter environments"
 authors = [
     {name = "Matthew Taylor", email = "matthew.taylor.andre@gmail.com"},
