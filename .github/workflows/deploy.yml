@@ -33,7 +33,7 @@ jobs:
 
       - name: Build the JupyterLite site
         run: |
-          jupyter lite build --contents example_basic.ipynb example_continuum.ipynb  --output-dir site_dist/jupyterlite
+          jupyter lite build --contents example_basic.ipynb --contents example_continuum.ipynb  --output-dir site_dist/jupyterlite
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
