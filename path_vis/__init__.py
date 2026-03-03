@@ -8,6 +8,7 @@ class PathVis(anywidget.AnyWidget):
     _esm = pathlib.Path(__file__).parent / "main.js"
 
     path = traitlets.List(traitlets.Float(), default_value=[]).tag(sync=True)
+    target_xform = traitlets.List(traitlets.Float(), default_value=[]).tag(sync=True)
 
     def __init__(self, path):
         super().__init__()

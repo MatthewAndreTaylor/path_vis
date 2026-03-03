@@ -25,24 +25,67 @@ export default {
     scene.add(light);
     scene.add(new THREE.AmbientLight(0x404040));
 
-    // Transformation matricies
-    const path = model.get("path");
-
-    const points = [];
-    for (let i = 0; i < path.length; i += 16) {
-      const m = path.slice(i, i + 16);
-      points.push(new THREE.Vector3(m[3], m[7], m[11]));
-      const mat4 = new THREE.Matrix4().set(...m);
-      const axes = new THREE.AxesHelper(0.03);
-      axes.applyMatrix4(mat4);
-      scene.add(axes);
+    function updateTargetXform() {
+      const mt = model.get("target_xform");
+      if (mt.length > 0 && mt.length === 16) {
+        const mat = new THREE.Matrix4().set(...mt);
+        const targetTransform = new THREE.AxesHelper(0.2);
+        targetTransform.applyMatrix4(mat);
+        targetTransform.name = "targetTransform"; 
+        scene.add(targetTransform);
+      }
     }
 
-    const curve = new THREE.CatmullRomCurve3(points);
-    const tubeGeometry = new THREE.TubeGeometry(curve, 200, 0.005, 50, false);
+    updateTargetXform();
+
+    model.on("change:target_xform", () => {
+      const oldTarget = scene.getObjectByName("targetTransform");
+      if (oldTarget) {
+        scene.remove(oldTarget);
+      }
+      updateTargetXform();
+    });
+
     const tubeMaterial = new THREE.MeshStandardMaterial({ color: 0xff0000 });
-    const tubeMesh = new THREE.Mesh(tubeGeometry, tubeMaterial);
+    const tubeMesh = new THREE.Mesh(new THREE.BufferGeometry(), tubeMaterial);
     scene.add(tubeMesh);
+    let axesHelpers = [];
+
+    function updatePath(path) {
+      const points = [];
+      const matrixCount = path.length / 16;
+
+      while (axesHelpers.length < matrixCount) {
+        const axes = new THREE.AxesHelper(0.03);
+        scene.add(axes);
+        axesHelpers.push(axes);
+      }
+
+      for (let i = 0; i < matrixCount; i++) {
+        const m = path.slice(i * 16, i * 16 + 16);
+        const mat4 = new THREE.Matrix4().set(...m);
+        points.push(new THREE.Vector3(m[3], m[7], m[11]));
+        const axes = axesHelpers[i];
+        axes.matrix = mat4;
+        axes.matrix.decompose(axes.position, axes.quaternion, axes.scale);
+      }
+
+      if (points.length < 2) {
+        console.warn("Path must contain at least 2 points to render a tube.");
+        return;
+      }
+
+      const curve = new THREE.CatmullRomCurve3(points);
+      const newGeometry = new THREE.TubeGeometry(curve, 200, 0.005, 50, false);
+      tubeMesh.geometry.dispose();
+      tubeMesh.geometry = newGeometry;
+    }
+
+    updatePath(model.get("path"));
+
+    model.on("change:path", () => {
+      updatePath(model.get("path"));
+    });
 
     let isDragging = false;
     let isRotating = false;
