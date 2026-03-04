@@ -5,7 +5,7 @@
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/MatthewAndreTaylor/path_vis/blob/main/example_continuum.ipynb)
 
-![path_visualization](https://github.com/user-attachments/assets/91dbfb8d-ecc4-4ad2-9890-526b537dbd14)
+![path_visualization](https://github.com/user-attachments/assets/c5f25afb-a765-4394-b58d-67c1fe87f0cc)
 
 <details>
   <summary>demo video</summary>
