@@ -157,6 +157,47 @@ export default {
       previousMousePos.x = e.clientX;
       previousMousePos.y = e.clientY;
     });
+    let mediaRecorder;
+let recordedChunks = [];
+
+function setupRecorder() {
+  const stream = renderer.domElement.captureStream(120); // 120 FPS
+  mediaRecorder = new MediaRecorder(stream, {
+    mimeType: "video/webm",
+    videoBitsPerSecond: 100_000_000
+  });
+
+  mediaRecorder.ondataavailable = function (event) {
+    if (event.data.size > 0) {
+      recordedChunks.push(event.data);
+    }
+  };
+
+  mediaRecorder.onstop = function () {
+    const blob = new Blob(recordedChunks, { type: "video/webm" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `path_visualization_${Date.now()}.webm`;
+    a.click();
+
+    URL.revokeObjectURL(url);
+    recordedChunks = [];
+  };
+}
+
+setupRecorder();
+
+function record10Seconds() {
+  mediaRecorder.start();
+
+  setTimeout(() => {
+    mediaRecorder.stop();
+  }, 10000); // 10 seconds
+}
+
+record10Seconds();
 
     function animate() {
       requestAnimationFrame(animate);
